@@ -101,18 +101,46 @@
         });
     }
 
-    function storeContent(url) {
-        window.ipfs.add(url, function(err, result) {
-            if (err) {
-                console.error("Content submission error:", err);
-                return false;
-            } else if (result && result[0] && result[0].Hash) {
-                console.log("Content successfully stored. IPFS address:", result[0].Hash);
-            } else {
-                console.error("Unresolved content submission error");
-                return null;
-            }
-        });
+//modified
+    function storeContent() {
+	var file = document.getElementById("InputFile").files[0];
+	console.log("DEBUG: file size=", file.size);
+
+	var reader = new FileReader();
+	var file_object = {
+		path: file.name,
+		content: ""
+	};
+	//file_object.path = file.name;
+
+	reader.onload = function(theFile) {
+		//console.log(theFile.target.result);
+		file_object.content = theFile.target.result;
+		/*var content = {
+			path: theFile.path;
+			content: theFile;
+		}*/
+		var ipfs_hash = "";
+       		window.ipfs.add(file_object, function(err, result) {
+	            if (err) {
+	                console.error("Content submission error:", err);
+	                return false;
+	            } else if (result && result[0] && result[0].Hash) {
+	                console.log("Content successfully stored. IPFS address:", result[0].Hash);
+			ipfs_hash = result[0].Hash;
+			console.log("DEBUG: hash = ", ipfs_hash);
+			storeAddress(ipfs_hash);
+			//setTimeout(function(){storeAddress(ipfs_hash);}, 1000);
+	            } else {
+	                console.error("Unresolved content submission error");
+	                return null;
+	            }
+	        });
+
+
+	};
+
+	reader.readAsText(file);
     }
 
     function storeAddress(data) {
@@ -169,7 +197,14 @@
 </head>
 
 <body>
+	<input type="button" value="deploy" onClick="deployStorage();" />
     <br/>
+	<p>
+		<input type="file" id= "InputFile"/>
+		<input type="button" value="read" onClick="storeContent();" />
+	</p>
+	<input type="button" value="fetch" onClick="fetchContent();" />
+
     <h2>IPFS + Ethereum Storage Application</h2>
 
     <hr/>
