@@ -181,6 +181,7 @@
                 var URL = window.ipfsAddress + "/" + result;
                 console.log("Content successfully retrieved. IPFS address", result);
                 console.log("Content URL:", URL);
+                showString(result, URL);
             } else {
                 console.error('No data, verify the transaction has been mined');
             }
@@ -191,6 +192,16 @@
         window.web3.eth.getBalance(window.account, function (err, balance) {
             console.log(parseFloat(window.web3.fromWei(balance, "ether")));
         });
+    }
+
+    function showString(hash, address){
+        var para = document.createElement("a");
+        para.href = address;
+	para.innerHTML = hash;
+        para.target = "_blank";
+
+        var dest = document.getElementById("contents");
+        dest.appendChild(para);
     }
 
     </script>
@@ -204,6 +215,7 @@
 		<input type="button" value="read" onClick="storeContent();" />
 	</p>
 	<input type="button" value="fetch" onClick="fetchContent();" />
+    <div id="contents"></div>
 
     <h2>IPFS + Ethereum Storage Application</h2>
 
